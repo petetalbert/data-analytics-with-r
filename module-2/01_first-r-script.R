@@ -13,4 +13,7 @@ library(tidyverse)
 
 office_ratings <- read_csv("office_ratings.csv")
 
+# We can print by just running the object name.
 office_ratings
+
+
