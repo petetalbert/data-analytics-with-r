@@ -17,12 +17,14 @@ office_ratings <- read_csv("module-02/office_ratings.csv")
 
 # first I want to summarize the data, so it's ready to plot.
 office_ratings_grouped <- group_by(office_ratings, season)
-office_ratings_summary <- summarize(office_ratings_grouped, avg_total_votes = mean(total_votes))
+office_ratings_summary <- summarize(office_ratings_grouped, 
+                                    avg_total_votes = mean(total_votes))
 
 # here is the code that creates the plot.
-ggplot(data = office_ratings_summary, mapping = aes(x = as.character(season), y = avg_total_votes)) + 
-  geom_col() +
-  theme_minimal()
+ggplot(data = office_ratings_summary, 
+       mapping = aes(x = season, 
+                     y = avg_total_votes)) + 
+  geom_col()
 
 
 # okay, lot's of fancy tinkering to get the plot looking professional. We will discuss this in much greater detail in our dedicated session on ggplot.
@@ -41,7 +43,8 @@ ggplot(data = office_ratings_summary, mapping = aes(x = as.character(season), y 
     y = "Avg total votes"
   ) +
   theme(panel.grid.minor.y = element_blank(),
-        panel.grid.major.x = element_blank())
+        panel.grid.major.x = element_blank(),
+        plot.title = element_text(face = "bold"))
 
 # Nice looking plot, right? All made with code!
 

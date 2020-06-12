@@ -27,3 +27,7 @@ mean(x, na.rm = TRUE)
 arrange(office_ratings, desc(imdb_rating))
 
 filter(office_ratings, imdb_rating < 7.3)
+
+# we can supply more than one criterion!
+filter(office_ratings, imdb_rating < 7.3 & total_votes > 1500)
+
