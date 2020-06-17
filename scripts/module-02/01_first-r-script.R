@@ -1,8 +1,9 @@
 
 # Load packages -----------------------------------------------------------
 # In your R scripts, you always want to first load any packages you plan on using. Again, using
-# library() basically loads the package so you can use the functions it contains.
-
+# library() loads the package so you can use the functions it contains. If you haven't already installed the tidyverse,
+# it is commented out below.
+# install.packages("tidyverse")
 library(tidyverse)
 
 
