@@ -11,7 +11,7 @@ library(tidyverse)
 # read_csv() takes a .csv file (essentially a spreadsheet data file) loads it into our environment as
 # a data.frame.
 
-office_ratings <- read_csv("module-02/office_ratings.csv")
+office_ratings <- read_csv("data/office_ratings.csv")
 
 # Let's make our first plot! -----------------------------------------------
 
@@ -28,8 +28,9 @@ ggplot(office_ratings_summary,
 
 
 # okay, lot's of fancy tinkering to get the plot looking professional. We will discuss this in much greater detail in our dedicated session on ggplot.
-# you'll need to install a new package called "scales". Remember: just run install.packages("scales") once, then load 
-# it with library(scales) each time you want to use it.
+# you'll need to install a new package called "scales". Remember: just run install.packages("scales") once, then load
+# it with library(scales) each time you want to use it; I've commented out the code if want to just use that.
+# install.packages("scales")
 library(scales)
 
 ggplot(data = office_ratings_summary, mapping = aes(x = as.character(season), y = avg_total_votes)) + 

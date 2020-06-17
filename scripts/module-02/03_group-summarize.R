@@ -11,7 +11,7 @@ library(tidyverse)
 # read_csv() takes a .csv file (essentially a spreadsheet data file) loads it into our environment as
 # a data.frame.
 
-office_ratings <- read_csv("module-02/office_ratings.csv")
+office_ratings <- read_csv("data/office_ratings.csv")
 
 
 # Let's group and summarize! -----------------------------------------------
