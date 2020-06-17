@@ -16,5 +16,5 @@ To download the course materials:
 2.  Once it is saved on your computer, click “Extract all” on a Windows
     machine or just double-click if you’re on a Mac.
 3.  Once the folder is unzipped, open that newly created folder, and
-    open a particular module’s RStudio project (double-click the .RProj
-    file).
+    open data-analytics-with-r.Rproj file to begin your work and to run
+    any scripts.
