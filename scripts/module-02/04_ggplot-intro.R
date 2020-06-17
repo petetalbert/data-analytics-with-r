@@ -21,9 +21,9 @@ office_ratings_summary <- summarize(office_ratings_grouped,
                                     avg_total_votes = mean(total_votes))
 
 # here is the code that creates the plot.
-ggplot(data = office_ratings_summary, 
-       mapping = aes(x = season, 
-                     y = avg_total_votes)) + 
+ggplot(office_ratings_summary, 
+       aes(x = season, 
+           y = avg_total_votes)) + 
   geom_col()
 
 
