@@ -37,6 +37,7 @@ arrange(office_ratings, ___)
 ### <         less than
 ### <=        less than or equal to
 ### ==        equals
+### !=        does not equal
 
 # We can also string together different logical operators with AND and OR statements.
 #   Operator  Meaning
