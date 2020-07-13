@@ -1,0 +1,38 @@
+---
+title: "The Office IMDB Ratings"
+author: "Pete Talbert"
+date: "8/20/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+## IMDB Ratings across time
+
+*The Office* saw higher average IMDB ratings of its episodes the first seven seasons, but in seasons eight and nine it dipped.
+
+```{r}
+library(tidyverse)
+
+office_ratings <- read_csv("data/office_ratings.csv")
+
+office_ratings %>% 
+  group_by(season) %>% 
+  summarize(avg_imdb_rating = mean(imdb_rating)) %>% 
+  mutate(season = as_factor(season)) %>% 
+  ggplot(aes(x = season, y = avg_imdb_rating)) +
+  geom_col()
+```
+
+However, in season nine, the finale was one of the highest rated episodes of the entire series.
+
+```{r}
+office_ratings %>% 
+  filter(season == 9) %>% 
+  ggplot(aes(x = episode, y = imdb_rating, group = 1)) +
+  geom_line() +
+  scale_y_continuous(limits = c(0, 10))
+```
+
