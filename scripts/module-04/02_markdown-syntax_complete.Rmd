@@ -1,0 +1,54 @@
+---
+title: "The Office IMDB Ratings"
+author: "Pete Talbert"
+date: "8/20/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice markdown syntax! -----------------------------------
+# 1) MAKE A LEVEL 2 HEADING BELOW. CALL IT: "Do average IMDB ratings for The Office change across seasons?"
+# 2) ITALICIZE "The Office" IN THE SENTENCE BELOW YOUR LEVEL 2 HEADING.
+# 3) MAKE A LEVEL 3 HEADING AT THE END OF THE FILE. CALL IT: "About the data"
+# 4) WRITE A SENTENCE OR TWO ABOUT WHAT THE DATA IS AND WHERE IT COMES FROM. REFERENCE THE URL BELOW BY MAKING AN EMBEDDED 
+# LINK IN YOUR PARAGRAPH.
+# https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-03-17
+# 5) ALSO WRITE A SENTENCE ABOUT HOW MANY TOTAL ROWS THERE ARE IN THE DATASET. WRITE INLINE R CODE TO PRODUCE THE NUMBER.
+# 6) WHEN YOU'RE DONE, CLICK "KNIT" TO RUN THE CODE AND VIEW YOUR NEW WORD DOCUMENT.
+```
+
+## Do average IMDB ratings for The Office change across seasons?
+
+*The Office* saw higher average IMDB ratings of its episodes the first seven seasons, but in seasons eight and nine it dipped.
+
+```{r}
+library(tidyverse)
+
+office_ratings <- read_csv("data/office_ratings.csv")
+
+office_ratings %>% 
+  group_by(season) %>% 
+  summarize(avg_imdb_rating = mean(imdb_rating)) %>% 
+  mutate(season = as_factor(season)) %>% 
+  ggplot(aes(x = season, y = avg_imdb_rating)) +
+  geom_col()
+```
+
+However, in season nine, the finale was one of the highest rated episodes of the entire series.
+
+```{r}
+office_ratings %>% 
+  filter(season == 9) %>% 
+  ggplot(aes(x = episode, y = imdb_rating, group = 1)) +
+  geom_line() +
+  scale_y_continuous(limits = c(0, 10))
+```
+
+### About the data
+
+The data are IMDB ratings for each episode of *The Office*, the hit NBC show that ran in the mid-2000s. The data comes from the Tidy Tuesday R project, and can be found [here](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-03-17). Overall, there were `r count(office_ratings)` rows in the data.
+
