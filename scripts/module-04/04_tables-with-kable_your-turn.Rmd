@@ -1,0 +1,66 @@
+---
+title: "The Office IMDB Ratings"
+author: "Pete Talbert"
+date: "8/20/2020"
+output: word_document
+---
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice making tables with kable()! -----------------------------------
+# 1) IN THE FIRST CODE CHUNK BELOW, CREATE A SUMMARY TABLE THAT GIVES THE AVERAGE IMDB RATING AND NUMBER OF EPISODES BY SEASON.
+# ADD THE kable() FUNCTION TO THE LAST LINE WITHOUT ANY ARGUMENTS. KNIT THE FILE.
+# 2) IN THE SECOND CODE CHUNK, I HAVE WRITTEN THE CODE TO PRODUCE THE SAME SUMMARY TABLE. THIS TIME, INSERT ARGUMENTS INSIDE kable() TO DO TWO THINGS:
+# FIRST, CREATE A CAPTION WITH WHATEVER TEXT YOU LIKE USING THE caption ARGUMENT; SECOND, ROUND THE avg_imdb_rating TO THE NEAREST 10TH PLACE
+# USING THE digits ARGUMENT. RE-KNIT THE FILE.
+# 3) LASTLY, ADD ONE ADDITIONAL ARGUMENT TO kable() ALONG WITH THE OTHER TWO THAT RENAMES THE COLUMNS TO BE MORE READABLE USING THE col.names()
+# ARGUMENT. RE-KNIT THE FILE.
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+## Do average IMDB ratings for The Office change across seasons?
+
+*The Office* saw higher average IMDB ratings of its episodes the first seven seasons, but in seasons eight and nine it dipped.
+
+```{r}
+library(tidyverse)
+library(knitr) # Note: we need to load the knitr library explicitly to be able to use the kable() function.
+
+office_ratings <- read_csv("data/office_ratings.csv")
+```
+
+#### 1)
+
+```{r}
+# 1)
+office_ratings %>% 
+  group_by(season) %>% 
+  summarize(avg_imdb_rating = ___,
+            n_of_episodes = ___) %>% 
+  kable()
+```
+
+### 2)
+
+```{r}
+# 2)
+office_ratings %>% 
+  group_by(season) %>% 
+  summarize(avg_imdb_rating = mean(imdb_rating),
+            n_of_episodes = n()) %>% 
+  kable(___)
+```
+
+### 3)
+
+```{r}
+# 2)
+office_ratings %>% 
+  group_by(season) %>% 
+  summarize(avg_imdb_rating = mean(imdb_rating),
+            n_of_episodes = n()) %>% 
+  kable(___)
+```

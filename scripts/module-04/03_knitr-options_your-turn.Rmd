@@ -1,0 +1,53 @@
+---
+title: "The Office IMDB Ratings"
+author: "Pete Talbert"
+date: "8/20/2020"
+output: word_document
+---
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice knitr options! -----------------------------------
+# 1) IN THE FIRST R SETUP CHUNK BELOW, CHANGE echo TO TRUE, AND RE-KNIT. HOW IS THE OUTPUT DIFFERENT?
+# 2) CHANGE echo BACK TO FALSE; NOW CHANGE BOTH warning AND message TO TRUE, AND RE-KNIT. HOW IS THE OUTPUT DIFFERENT?
+# 3) CHANGE warning AND message BACK TO FALSE; IN THE SECOND CHUNK WHERE WE IMPORT THE DATA, INSIDE THE CURLY BRACES TYPE eval = FALSE, AND RE-KNIT. 
+# WHAT ERROR DID IT GIVE YOU AND WHY?
+# 4) REMOVE eval = FALSE, AND NOW PUT THE FOLLOWING IN THE SAME CODE CHUNK: fig.width = 4, fig.height = 4, dpi = 700, AND RE-KNIT. 
+# WHAT DO THESE SETTINGS DO?
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+## Do average IMDB ratings for The Office change across seasons?
+
+*The Office* saw higher average IMDB ratings of its episodes the first seven seasons, but in seasons eight and nine it dipped.
+
+```{r}
+library(tidyverse)
+
+office_ratings <- read_csv("data/office_ratings.csv")
+
+office_ratings %>% 
+  group_by(season) %>% 
+  summarize(avg_imdb_rating = mean(imdb_rating)) %>% 
+  mutate(season = as_factor(season)) %>% 
+  ggplot(aes(x = season, y = avg_imdb_rating)) +
+  geom_col()
+```
+
+However, in season nine, the finale was one of the highest rated episodes of the entire series.
+
+```{r}
+office_ratings %>% 
+  filter(season == 9) %>% 
+  ggplot(aes(x = episode, y = imdb_rating, group = 1)) +
+  geom_line() +
+  scale_y_continuous(limits = c(0, 10))
+```
+
+### About the data
+
+The data are IMDB ratings for each episode of *The Office*, the hit NBC show that ran in the mid-2000s. The data comes from the Tidy Tuesday R project, and can be found [here](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-03-17). Overall, there were `r count(office_ratings)` rows in the data.
+

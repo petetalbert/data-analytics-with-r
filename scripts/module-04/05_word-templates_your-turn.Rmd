@@ -1,0 +1,59 @@
+---
+title: "The Office IMDB Ratings"
+author: "Pete Talbert"
+date: "8/20/2020"
+output: 
+  word_document:
+    reference_docx: "../../templates/word-styles-office-2016.docx"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(knitr)
+
+office_ratings <- read_csv("data/office_ratings.csv")
+
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, dpi = 700)
+ggplot2::theme_set(ggplot2::theme_minimal())
+```
+
+## Introduction
+
+Below we see the overall number of epsiodes per season and the average IMDB ratings. Clearly, the show declined in popularity across time.
+
+```{r}
+office_ratings %>% 
+  group_by(season) %>% 
+  summarize(avg_imdb_rating = mean(imdb_rating),
+            n_of_episodes = n()) %>% 
+  kable(caption = "Summary of The Office seasons", digits = 1, col.names = c("Season", "Average IMDB Rating", "No. of Episodes"))
+```
+
+
+## Do average IMDB ratings for The Office change across seasons?
+
+*The Office* saw higher average IMDB ratings of its episodes the first seven seasons, but in seasons eight and nine it dipped.
+
+```{r}
+office_ratings %>% 
+  group_by(season) %>% 
+  summarize(avg_imdb_rating = mean(imdb_rating)) %>% 
+  mutate(season = as_factor(season)) %>% 
+  ggplot(aes(x = season, y = avg_imdb_rating)) +
+  geom_col()
+```
+
+However, in season nine, the finale was one of the highest rated episodes of the entire series.
+
+```{r}
+office_ratings %>% 
+  filter(season == 9) %>% 
+  ggplot(aes(x = episode, y = imdb_rating, group = 1)) +
+  geom_line() +
+  scale_y_continuous(limits = c(0, 10))
+```
+
+### About the data
+
+The data are IMDB ratings for each episode of *The Office*, the hit NBC show that ran in the mid-2000s. The data comes from the Tidy Tuesday R project, and can be found [here](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-03-17). Overall, there were `r count(office_ratings)` rows in the data.
+

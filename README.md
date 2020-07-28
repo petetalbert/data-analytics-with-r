@@ -1,7 +1,7 @@
 CAPE - Data Analytics with R
 ================
 
-![ust-logo](ust-logo.jpg)
+![ust-logo](etc/ust-logo.jpg)
 
 Welcome to the Github site for the University of St. Thomas CAPE course,
 *Data Analytics with R*\!
