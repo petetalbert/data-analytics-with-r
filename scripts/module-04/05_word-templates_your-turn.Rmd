@@ -4,7 +4,7 @@ author: "Pete Talbert"
 date: "8/20/2020"
 output: 
   word_document:
-    reference_docx: "../../templates/word-styles-office-2016.docx"
+    reference_docx: "../../templates/word-styles.docx"
 ---
 
 ```{r setup, include=FALSE}
