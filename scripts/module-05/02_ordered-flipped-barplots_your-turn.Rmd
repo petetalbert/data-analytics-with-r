@@ -1,0 +1,56 @@
+---
+title: "The Office IMDB Ratings"
+author: "Pete Talbert"
+date: "8/20/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+
+tuition_cost <- read_csv("data/tuition_cost.csv")
+
+diversity_school <- read_csv("data/diversity_school.csv")
+
+salary_potential <- read_csv("data/salary_potential.csv")
+
+
+```
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice skimming our new datasets! -----------------------------------
+# 1) IN SECTION # 1) BELOW, GET THE TOP TEN MOST EXPENSIVE UNIVERSITIES (BY out_of_state_tuition). CREATE A ORDERED FLIPPED BARPLOT FROM THIS. GIVE
+#    IT AN APPROPRIATE TITLE AND SUBTITLE. NOTE: THIS DOES NOT INCLUDE count() SINCE WE ALREADY HAVE THE VALUES WE WANT; THIS IS JUST A top_n().
+# 2) MAKE THE SAME PLOT BUT THIS TIME LOOK AT TOP TEN room_and_board. HINT: COPY AND PASTE YOUR FIRST PLOT INTO THE EMPTY CODE CHUNK AND JUST CHANGE THE
+#    APPROPRIATE COLUMN.
+# 3) TAKE YOUR PLOT FROM # 1) and # 2) AND FILL THE COLUMN BY THE STATE. WHICH STATE(S) HAS THE MOST IN THE TOP TEN FOR EACH? WRITE YOUR FINDINGS BRIEFLY
+#    IN PLAIN TEXT OUTSIDE THE CODE CHUNK AT THE BOTTOM.
+```
+
+# 1)
+
+```{r}
+tuition_cost %>% 
+  top_n(10, ___) %>% 
+  mutate(name = fct_reorder(name, ___)) %>% 
+  ggplot(aes(x = name, y = ___)) +
+  geom_col() +
+  coord_flip() +
+  labs()
+```
+
+# 2)
+
+```{r}
+
+```
+
+# 3)
+
+```{r}
+
+```
+
+What did you learn?

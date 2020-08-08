@@ -1,0 +1,88 @@
+---
+title: "The Office IMDB Ratings"
+author: "Pete Talbert"
+date: "8/20/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+
+tuition_cost <- read_csv("data/tuition_cost.csv")
+
+diversity_school <- read_csv("data/diversity_school.csv")
+
+salary_potential <- read_csv("data/salary_potential.csv")
+
+
+```
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice skimming our new datasets! -----------------------------------
+# 1) IN SECTION # 1) BELOW, GET THE TOP TEN MOST EXPENSIVE UNIVERSITIES (BY out_of_state_tuition). CREATE A ORDERED FLIPPED BARPLOT FROM THIS. GIVE
+#    IT AN APPROPRIATE TITLE AND SUBTITLE. NOTE: THIS DOES NOT INCLUDE count() SINCE WE ALREADY HAVE THE VALUES WE WANT; THIS IS JUST A top_n().
+# 2) MAKE THE SAME PLOT BUT THIS TIME LOOK AT TOP TEN room_and_board. HINT: COPY AND PASTE YOUR FIRST PLOT INTO THE EMPTY CODE CHUNK AND JUST CHANGE THE
+#    APPROPRIATE COLUMN.
+# 3) TAKE YOUR PLOT FROM # 1) and # 2) AND FILL THE COLUMN BY THE STATE. WHICH STATE(S) HAS THE MOST IN THE TOP TEN FOR EACH? WRITE YOUR FINDINGS BRIEFLY
+# IN PLAIN TEXT OUTSIDE THE CODE CHUNK AT THE BOTTOM.
+```
+
+# 1)
+
+```{r}
+tuition_cost %>% 
+  top_n(10, out_of_state_tuition) %>% 
+  mutate(name = fct_reorder(name, out_of_state_tuition)) %>% 
+  ggplot(aes(x = name, y = out_of_state_tuition)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "All of the most expensive universities are above $70,000 a year in total cost",
+    subtitle = "Top 10 U.S. universities by out of state tuition"
+  )
+```
+
+# 2)
+
+```{r}
+tuition_cost %>% 
+  top_n(10, room_and_board) %>% 
+  mutate(name = fct_reorder(name, room_and_board)) %>% 
+  ggplot(aes(x = name, y = room_and_board)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "The most expensive room and board costs range from $15,000 to $20,000",
+    subtitle = "Top 10 U.S. universities by room and board"
+  )
+```
+
+# 3)
+
+```{r}
+tuition_cost %>% 
+  top_n(10, out_of_state_tuition) %>% 
+  mutate(name = fct_reorder(name, out_of_state_tuition)) %>% 
+  ggplot(aes(x = name, y = out_of_state_tuition, fill = state)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "All of the most expensive universities are above $70,000 a year in total cost",
+    subtitle = "Top 10 U.S. universities by out of state tuition"
+  )
+
+tuition_cost %>% 
+  top_n(10, room_and_board) %>% 
+  mutate(name = fct_reorder(name, room_and_board)) %>% 
+  ggplot(aes(x = name, y = room_and_board, fill = state)) +
+  geom_col() +
+  coord_flip() +
+  labs(
+    title = "The most expensive room and board costs range from $15,000 to $20,000",
+    subtitle = "Top 10 U.S. universities by room and board"
+  )
+```
+
+Most expensive out of state tuition has a number of states represented, most notable, NY and CA. However, most expensive room and board costs only have three: CA, MA, and NY. This may indicate that room and board says much more about the local economy of the university than it does the individual school. The Northeast and West Coast have much higher costs of living than the rest of the country.

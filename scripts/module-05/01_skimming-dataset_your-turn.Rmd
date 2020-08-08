@@ -1,0 +1,52 @@
+---
+title: "The Office IMDB Ratings"
+author: "Pete Talbert"
+date: "8/20/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+
+tuition_cost <- read_csv("data/tuition_cost.csv")
+
+diversity_school <- read_csv("data/diversity_school.csv")
+
+salary_potential <- read_csv("data/salary_potential.csv")
+
+# You may want to reference some values in the skim output, so I've saved these as objects.
+skim_diversity <- skim(diversity_school)
+skim_salary <- skim(salary_potential)
+```
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice skimming our new datasets! -----------------------------------
+# 1) IN THE # 1) CODE CHUNK BELOW, RUN THE skim() FUNCTION ON THE diversity_school AND salary_potential DATASETS. DON'T FORGET TO LOAD THE PACKAGE!
+# 2) USING JUST PLAIN TEXT, ANSWER THE QUESTIONS UNDER THE #2) HEADER. USE THE MARKDOWN SYNTAX TO MAKE AN UNORDERED LIST.
+```
+
+# 1)
+
+```{r}
+
+```
+
+# 2)
+
+## How many rows and columns are in `diversity_school`? `salary_potential`?
+
+
+
+## How many unique demographic values are there in the `category` column of `diversity_school`?
+
+
+
+## What columns have missing values in `diversity_school` and `salary_potential`? What are the completion rates of each column (i.e., what % of values are non-missing)?
+
+```{r}
+
+```
+
+
