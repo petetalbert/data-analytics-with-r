@@ -1,0 +1,48 @@
+---
+title: "The Office IMDB Ratings"
+author: "Pete Talbert"
+date: "8/20/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+
+tuition_cost <- read_csv("data/tuition_cost.csv")
+
+diversity_school <- read_csv("data/diversity_school.csv")
+
+salary_potential <- read_csv("data/salary_potential.csv")
+
+
+```
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice using the new ggplot functions to make our plot presentation-ready! -----------------------------------
+# WE WILL BE WORKING WITH OUR NEW FUNCTIONS AND ADDING THEM TO THE BASIC PLOT BELOW.
+# 1) SCALES: ADD THE scale_fill_viridis_d() TO THE PLOT TO CHANGE THE FILL COLORS. ADD scale_y_continuous() TO THE PLOT IN ORDER TO CHANGE
+# THE LABELS TO BE IN DOLLAR FORMAT (HINT: YOU WILL NEED A FUNCTION FROM THE scales PACKAGE.)
+# 2) CHANGE THE PLOT TO THE MINIMAL THEME.
+# 3) ADD theme() WITH THE FOLLOWING EDITS:
+#     --REMOVE THE MINOR GRID LINE FOR X.
+#     --REMOVE THE MAJOR GRID LINE FOR Y.
+#     --REMOVE THE LEGEND COMPLETELY.
+# 4) ADD labs() AND CREATE A CREATIVE TITLE AND SUBTITLE. REMOVE THE X- AND Y-AXIS LABELS IF YOU WANT.
+```
+
+```{r}
+# Remember to run install.packages("scales") if you haven't installed the scales package before.
+library(scales)
+
+tuition_cost %>%
+  filter(state_code %in% c("MN", "WI", "ND", "SD", "IA")) %>% 
+  group_by(state) %>% 
+  summarize(median_out_of_state_tuition = median(out_of_state_tuition)) %>% 
+  mutate(state = fct_reorder(state, median_out_of_state_tuition)) %>% 
+  ggplot(aes(x = state, y = median_out_of_state_tuition, fill = state)) +
+  geom_col() + 
+  coord_flip()
+```
+

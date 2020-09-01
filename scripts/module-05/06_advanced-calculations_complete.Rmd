@@ -1,0 +1,56 @@
+---
+title: "The Office IMDB Ratings"
+author: "Pete Talbert"
+date: "8/20/2020"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+
+tuition_cost <- read_csv("data/tuition_cost.csv")
+
+diversity_school <- read_csv("data/diversity_school.csv")
+
+salary_potential <- read_csv("data/salary_potential.csv")
+
+
+```
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice using pivot_longer to reshape our data! -----------------------------------
+# 1) FIRST, CREATE A NEW DATAFRAME WHERE THE COST DATA IS PIVOTED LONGER. SAVE IT AS tuition_cost_long.
+# 2) TAKE THAT NEW DATAFRAME, AND GROUP BY THE NEWLY CREATED COLUMN, cost_type. FIND THE MEDIAN cost ACROSS THE ENTIRE DATASET BY cost_type.
+#    HOW MUCH MORE IS THE MEDIAN in_state_tuition THAN THE MEDIAN out_of_state_tuition? WRITE A QUICK SENTENCE BELOW #2 GIVING YOUR RESULTS.
+# 3) WHY IS THE COST FOR THE room_and_board COST TYPE NA? USE FILTER APPROPRIATELY TO GET A NON-NA VALUE FOR room_and_board.
+```
+
+# 1)
+
+```{r}
+tuition_cost_long <- tuition_cost %>% 
+  pivot_longer(cols = c(room_and_board, in_state_tuition, in_state_total, out_of_state_tuition, out_of_state_total), # WHICH COLUMNS GO HERE?
+               names_to = "cost_type", 
+               values_to = "cost")
+```
+
+# 2)
+
+```{r}
+tuition_cost_long %>% 
+  group_by(cost_type) %>% 
+  summarize(median_cost = median(cost))
+```
+
+The median out-of-state tuition is around $7,400 more than the median in-state tuition.
+
+# 3)
+
+```{r}
+tuition_cost_long %>% 
+  filter(!is.na(cost)) %>% 
+  group_by(cost_type) %>% 
+  summarize(median_cost = median(cost))
+```
