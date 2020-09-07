@@ -32,7 +32,7 @@ salary_potential <- read_csv("data/salary_potential.csv")
 
 ```{r}
 diversity_school_total <- diversity_school %>% 
-  count(name, total_enrollment, state)
+  count(___, ___, ___)
 ```
 
 We'll talk about the `distinct()` function in module 6, but for now, a way to get a distinct list of universities from `diversity_school` is just to get a count of the distinct columns we want.
@@ -47,30 +47,29 @@ tuition_cost %>%
 
 ## What just happened?
 
-By joining only to `state`, the data returned a row for each key match of every college within a state with every other college within a state. That's a lot of different combinations! Hence, we return nearly a half a million rows.
+
 
 # 3)
 
 ```{r}
 tuition_diversity_joined <- tuition_cost %>% 
-  inner_join(diversity_school_total, by = c("state", "name"))
+  inner_join(___, by = c("___", "___"))
 
 ```
 
 ## What just happened?
 
-By joining on both `state` and `name`, we get more of the returned number of rows we're expecting. However, it is about 800 rows less than the original `tuition_cost` dataset. This is because there wasn't an exact match of universities in `diversity_school` as there was in `tuition_cost`. In module 6, we'll learn about when using a `left_join` may be more appropriate in this instance.
+
 
 # 4)
 
 ```{r}
 tuition_diversity_joined %>% 
-  ggplot(aes(x = out_of_state_tuition, y = total_enrollment)) +
-  geom_point()
+  ggplot(aes()) +
+  geom____()
 
 ```
 
-Looks like no real relationship between these two variables.
 
 
 

@@ -33,21 +33,21 @@ salary_potential <- read_csv("data/salary_potential.csv")
 
 ```{r}
 tuition_cost_new <- tuition_cost %>% 
-  group_by(state) %>% 
-  mutate(avg_out_of_state_tuition = mean(out_of_state_tuition)) %>% 
-  arrange(state, name) %>% 
+  group_by(___) %>% 
+  mutate(___ = mean(___)) %>% 
+  arrange(___, ___) %>% 
   ungroup() # always a good idea to ungroup() to ensure the data ungrouped when we don't want it to be for future work/transformations.
 ```
 
 ## What just happened?
 
-It returned the average out of state tuition for each state, but rather than collapsing the rows, it repeats this number for each row. This is really useful!
+
 
 # 2)
 
 ```{r}
 tuition_cost_new %>% 
-  mutate(out_of_state_diff = out_of_state_tuition - avg_out_of_state_tuition)
+  mutate(___ = ___ - ___)
 ```
 
 # 3)
@@ -55,7 +55,6 @@ tuition_cost_new %>%
 ```{r}
 tuition_cost_new %>% 
   mutate(out_of_state_diff = out_of_state_tuition - avg_out_of_state_tuition) %>% 
-  filter(out_of_state_diff >= -1000 & out_of_state_diff <= 1000) %>% 
-  filter(state_code == "MN")
+  filter(out_of_state_diff ___ & out_of_state_diff ___)
 ```
 
