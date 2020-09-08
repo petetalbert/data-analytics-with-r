@@ -1,0 +1,71 @@
+---
+title: "Marriage"
+author: "Pete Talbert"
+date: "9/3/2020"
+output: 
+  word_document:
+    reference_docx: "../templates/word-styles-office-2016.docx"
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, fig.width = 5, message = FALSE, warning = FALSE, cache = FALSE, dpi = 700)
+
+library(tidyverse)
+library(lubridate)
+library(scales)
+library(knitr)
+
+theme_set(theme_minimal(base_size = 10))
+
+marriage <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/marriage/both_sexes.csv") %>% 
+  select(-1)
+```
+
+## Let's try to recreate the plot!
+
+The plot from [here](https://fivethirtyeight.com/features/marriage-isnt-dead-yet/).
+
+```{r}
+marriage_long_new <- marriage %>% 
+  filter(year >= 1980) %>% 
+  select(year, date, HS_2534, SC_2534, BAp_2534, HS_3544, SC_3544, BAp_3544) %>% 
+  mutate(diff_hs_2534 =  first(HS_2534) - HS_2534,
+         diff_sc_2534 = first(SC_2534) - SC_2534,
+         diff_bap_2534 = first(BAp_2534) - BAp_2534,
+         diff_hs_3544 = first(HS_3544) - HS_3544,
+         diff_sc_3544 = first(SC_3544) - SC_3544,
+         diff_bap_3544 = first(BAp_3544) - BAp_3544) %>% 
+  select(year, date, starts_with("diff")) %>% 
+  pivot_longer(cols = c(starts_with("diff")), names_to = "education", values_to = "value") %>% 
+  mutate(age = case_when(str_detect(education, "2534") ~ "Ages 25-34",
+                         str_detect(education, "3544") ~ "Ages 35-44"),
+         education = case_when(str_detect(education, "hs") ~ "High school or less",
+                               str_detect(education, "sc") ~ "Some college",
+                               str_detect(education, "bap") ~ "College graduates"))
+```
+
+
+```{r}
+marriage_long_new %>% 
+  ggplot(aes(x = year, y = value)) +
+  geom_line(aes(color = education), size = 1) +
+  geom_text(data = marriage_long_new %>% filter(year == 2012, age == "Ages 25-34"), aes(label = education), size = 3, hjust = 1) +
+  geom_hline(yintercept = 0) +
+  facet_wrap(~ age) +
+  scale_color_manual(values = c("#EF924D", "#F3D3B2", "#D74903")) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  theme(plot.title = element_text(face = "bold"), legend.position = "none", plot.background = element_rect(fill = "#F0F0F0", color = NA)) +
+  labs(
+    title = "Marriage Rates by Education",
+    subtitle = "Change since 1980",
+    x = element_blank(),
+    y = element_blank()
+  )
+```
+
+
+
+
+
+
+

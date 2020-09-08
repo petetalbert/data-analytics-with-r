@@ -1,0 +1,65 @@
+---
+title: "Module 6 Your Turns"
+author: "Pete Talbert"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+
+tuition_cost <- read_csv("data/tuition_cost.csv")
+
+diversity_school <- read_csv("data/diversity_school.csv")
+
+salary_potential <- read_csv("data/salary_potential.csv")
+
+states <- bind_cols(state_code = state.abb, state_region = state.region, state_division = state.division)
+```
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice left_join()! -----------------------------------
+# 1) LEFT JOIN tuition_cost TO states BY state_code. IT SHOULD RETURN THE SAME ROWS AS tuition_cost: 2973. FILTER TO WHERE THE RECORDS DIDN'T JOIN. WHY?
+#    CREATE A COUNT OF THE state_code VALUES THAT DIDN'T JOIN TO THE states DATAFRAME.
+# 2) HOW WOULD YOU CATEGORIZE THESE state_code VALUES. USE A mutate() COUPLED WITH case_when() AFTER YOUR LEFT JOIN TO CATEGORIZE THEM IN A state_region AND state_division.
+```
+
+# 1)
+
+```{r}
+tuition_cost %>% 
+  left_join(states, by = "state_code") %>%
+  filter(is.na(state_region)) %>% 
+  count(state_code)
+```
+
+
+# 2)
+
+```{r}
+tuition_cost_region <- tuition_cost %>% 
+  left_join(states, by = "state_code") %>% 
+  mutate(state_region = case_when(state_code %in% c("AS", "GU", "PR", "VI") ~ "Island Territories",
+                                  state_code == "DC" ~ "Washington D.C.",
+                                  TRUE ~ as.character(state_region)), # case_when only takes character not factor data types.
+         state_division = case_when(state_code == "DC" ~ "Middle Atlantic",
+                                    state_code == "AS" ~ "South Pacific",
+                                    state_code == "GU" ~ "North Pacific",
+                                    state_code %in% c("PR", "VI") ~ "North Atlantic",
+                                    TRUE ~ as.character(state_division))) # case_when only takes character not factor data types.
+```
+
+Found some info here to make my categories: https://en.wikipedia.org/wiki/Territories_of_the_United_States
+
+Now we have no more NAs! Nice!
+
+```{r}
+tuition_cost_region %>% 
+  count(state_region)
+
+tuition_cost_region %>% 
+  count(state_division)
+```
+

@@ -1,0 +1,42 @@
+---
+title: "Module 6 Your Turns"
+author: "Pete Talbert"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+# install.packages("readxl") # install the readxl package if you haven't done so already!
+library(readxl)
+library(skimr)
+```
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice pulling in data from Excel files! -----------------------------------
+# 1) LET'S PULL IN AN EXAMPLE FINANCIAL DATASET FROM MICROSOFT. THIS IS IN THE FOLLOWING PATH: data/financial.xlsx. 
+#    MAKE SURE IT WAS IMPORTED PROPERLY BY PRINTING THE DATA AND USING skim().
+# 2) NOW LET'S PULL IN SOME DATA THAT NEEDS SOME OPTIONAL ARGUMENTS TO BE BROUGHT IN PROPERLY. FIRST, TAKE A LOOK AT data/celebrities.xlsx.
+#    SPECIFY THE other (the second tab) SHEET AND RANGE OF DATA IN ORDER TO AVOID THE NOTES ABOVE AN BELOW THE DATA. PULL IN JUST THE FIRST SHEET.
+#    MAKE SURE IT WAS IMPORTED PROPERLY BY PRINTING THE DATA AND USING skim().
+```
+
+# 1)
+
+```{r}
+financial <- read_xlsx("___")
+financial
+skim(___)
+
+```
+
+# 2)
+
+```{r}
+celebrities <- read_xlsx("___", sheet = "___", range = "___")
+celebrities
+skim(___)
+```
+

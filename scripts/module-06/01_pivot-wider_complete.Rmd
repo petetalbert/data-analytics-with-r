@@ -1,0 +1,73 @@
+---
+title: "Module 6 Your Turns"
+author: "Pete Talbert"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+
+tuition_cost <- read_csv("data/tuition_cost.csv")
+
+diversity_school <- read_csv("data/diversity_school.csv")
+
+salary_potential <- read_csv("data/salary_potential.csv")
+```
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice pivot_wider()! -----------------------------------
+# 1) LET'S PIVOT THE diversity_school DATAFRAME WIDER LIKE THE VIDEO. SKIM THE DATA AGAIN TO DETECT ANY NA VALUES.
+# 2) REMOVE NA VALUES AND PIVOT WIDER AGAIN TO GET THE DATA IN THE SHAPE WE WANT. SAVE THIS IS A NEW DATAFRAME.
+# 3) GET THE PROPORTION OF STUDENTS OF COLOR (THE `Total Minority`) AND THE PROPORTION OF `Women` AT EACH UNIVERSITY.
+# 4) ON AVERAGE, WHICH STATE HAS THE MOST DIVERSE UNIVERSITIES IN TERMS OF STUDENTS OF COLOR? WOMEN?
+```
+
+# 1)
+
+```{r}
+diversity_school %>% 
+  pivot_wider(names_from = category, 
+              values_from = enrollment)
+
+# this usually means we have some NAs where we don't want them.
+skimr::skim(diversity_school) # yep there's a few NAs in name and state.
+```
+
+When NAs are present, the `pivot_wider()` function wants to represent each cell as a list-column (if you're interested, you can check out [this webinar](https://rstudio.com/resources/webinars/how-to-work-with-list-columns/). This data structure is outside of the scope of this course, but suffice it to say, the data is transformed into nested columns and is much more difficult to work with. It's best to remove NAs and do our pivoting after.
+
+# 2)
+
+```{r}
+diversity_school_non_na <- diversity_school %>% 
+  filter(!is.na(name)) %>% 
+  pivot_wider(names_from = category, 
+              values_from = enrollment)
+```
+
+# 3)
+
+```{r}
+diversity_school_non_na %>% 
+  mutate(pct_student_of_color = `Total Minority` / total_enrollment,
+         pct_women = Women / total_enrollment)
+```
+
+# 4)
+
+```{r}
+diversity_school_non_na %>% 
+  mutate(pct_student_of_color = `Total Minority` / total_enrollment,
+         pct_women = Women / total_enrollment) %>% 
+  group_by(state) %>% 
+  summarize(avg_pct_student_of_color = mean(pct_student_of_color),
+            avg_pct_women = mean(pct_women)) %>% 
+  arrange(desc(avg_pct_student_of_color)) %>% # Hawaii
+  arrange(desc(avg_pct_women)) # Virginia
+```
+
+Hawaii has on average the most diverse universities in terms of race/ethnicity; Virginia has the on average the highest proportion of women at their universities.
+
+

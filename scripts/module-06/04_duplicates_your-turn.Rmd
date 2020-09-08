@@ -1,0 +1,68 @@
+---
+title: "Module 6 Your Turns"
+author: "Pete Talbert"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+
+tuition_cost <- read_csv("data/tuition_cost.csv")
+
+diversity_school <- read_csv("data/diversity_school.csv")
+
+salary_potential <- read_csv("data/salary_potential.csv")
+```
+
+```{r, your turn instructions, include=FALSE}
+# Let's practice dealing with duplicates! -----------------------------------
+# 1) FROM diversity_school PIPE IN AN add_count() WITH NO COLUMNS (JUST AN EMPTY FUNCTION). WHAT DOES IT RETURN?
+#    NOW ADD THE state COLUMN INSIDE add_count(). HOW DID THE n COLUMN CHANGE?
+# 2) ADD BOTH state AND name INSIDE add_count(). WHY DOES IT SHOW 11 FOR EACH ROW?
+# 3) NOW LET'S USE distinct(). START BY JUST PIPING IN A distinct() WITH NO COLUMNS (JUST AN EMPTY FUNCTION). WHAT DOES IT RETURN?
+#    NOW ADD THE name COLUMN INSIDE distinct(). HOW DID THE TOTAL NUMBER OF ROWS CHANGE? HOW MANY DISTINCT UNIVERSITIES ARE IN THE DATASET?
+#    NOW ADD THE name, total_enrollment, AND state INSIDE distinct(). WHY IS THE TOTAL NUMBER OF ROWS MORE THAN THE PREVIOUS COUNT WHERE WE ONLY HAD name?
+```
+
+# 1)
+
+```{r}
+diversity_school %>% 
+  ___()
+
+diversity_school %>% 
+  ___(___)
+```
+
+
+
+
+# 2)
+
+```{r}
+diversity_school %>% 
+  ___(___, ___)
+```
+
+
+
+
+# 3)
+
+```{r}
+diversity_school %>% 
+  ___()
+
+diversity_school %>% 
+  ___(___)
+
+diversity_school %>% 
+  ___(___, ___, ___)
+```
+
+
+
+

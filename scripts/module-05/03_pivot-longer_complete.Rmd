@@ -1,7 +1,7 @@
 ---
 title: "Module 5 Your Turns"
 author: "Pete Talbert"
-date: "8/20/2020"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: word_document
 ---
 
