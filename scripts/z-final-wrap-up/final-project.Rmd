@@ -1,0 +1,336 @@
+---
+title: "College tuition, diversity, and pay data"
+author: "Pete Talbert"
+date: "9/12/2020"
+output: 
+  word_document:
+    reference_docx: "../../templates/word-styles-office-2016.docx"
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, fig.width = 6.5, message = FALSE, warning = FALSE, cache = FALSE, dpi = 700)
+
+library(tidyverse)
+library(scales)
+library(knitr)
+library(skimr)
+
+theme_set(theme_minimal(base_size = 10))
+
+tuition_cost <- read_csv("data/tuition_cost.csv")
+salary_potential <- read_csv("data/salary_potential.csv")
+
+```
+
+## Introduction
+
+For the final project, I chose to look at the tuition cost data and the salary potential data. Specifically, I honed in on the top 6 states with the most colleges and universities. Also for purposes of simplification, I excluded universities whose type was "For Profit" or "Other." These states closely mirror the [state rankings by population](https://en.wikipedia.org/wiki/List_of_states_and_territories_of_the_United_States_by_population), except for Florida, which is the third most populous state; Illinois is sixth, but tied for fifth with Ohio for most colleges and universities.
+
+```{r}
+tuition_cost_top <- tuition_cost %>% 
+  filter(!type %in% c("For Profit", "Other")) %>% 
+  add_count(state) %>% 
+  mutate(state_dense_rank = dense_rank(desc(n))) %>% 
+  filter(state_dense_rank <= 5)
+
+tuition_cost_top %>% 
+  group_by(state) %>% 
+  summarize(n = n(),
+            n_private = sum(if_else(type == "Private", 1, 0)),
+            n_public = sum(if_else(type == "Public", 1, 0)),
+            median_in_state_total = dollar(median(in_state_tuition), accuracy = 1),
+            median_out_of_state_total = dollar(median(out_of_state_tuition), accuracy = 1)) %>% 
+  arrange(desc(n)) %>% 
+  kable(row.names = TRUE, col.names = c("State", "Total colleges and universities", "Private", "Public", "Median in-state tuition", "Median out of state tuition"))
+```
+
+
+## In-state vs. out-of-state tuition
+
+When comparing the differences between in-state and out-of-state tuition I found that nearly all public institutions had higher tuition rates for out-of-state students, where all private institutions had the same tuition cost whether in- or out-of-state. Below I present the median difference between these two costs for the public institutions that actually set different rates.
+
+We see that the median difference hovers between $6,000 and $8,500, with an exception in Texas where the difference is much lower.
+
+```{r}
+tuition_cost_top %>% 
+  mutate(out_in_diff = out_of_state_tuition - in_state_tuition,
+         no_diff = if_else(out_in_diff == 0, "Y", "N")) %>% 
+  filter(no_diff == "N") %>% 
+  group_by(state) %>% 
+  summarize(n = n(),
+            median_diff = dollar(median(out_in_diff))) %>% 
+  kable(row.names = TRUE, col.names = c("State", "Total colleges and universities with difference", "Median difference between in- and out-of-state tuition"))
+```
+
+## Tuition cost
+
+Below, I present all institutions with their in-state tuition cost by type and degree length. Here, we see private institutions vary widely in terms of tuition cost, where as public institutions are much more closely distributed, all being under $20,000. 2 year institutions are also clearly a cheaper option across the board. 
+
+Pennsylvania and Ohio stand out as the two states who have more than a fraction of private 2 year institutions.
+
+```{r}
+tuition_cost_top %>% 
+  mutate(state = fct_rev(state)) %>% 
+  ggplot(aes(x = state, y = in_state_tuition, color = degree_length)) +
+  geom_point(size = 3, alpha = 0.65) +
+  scale_y_continuous(limits = c(0, NA), labels = dollar_format()) +
+  facet_wrap(~ type, ncol = 1) +
+  coord_flip() +
+  theme(legend.position = "bottom", panel.grid.minor.x = element_blank(), plot.title = element_text(face = "bold")) +
+  labs(
+    title = "All public institutions are below $20,000, private insitutions vary widely",
+    subtitle = "Top 5 states with most universities' in-state tuition by type and degree length",
+    x = element_blank(),
+    y = element_blank(),
+    color = element_blank(),
+    caption = "Each point represents an individual college or university."
+  )
+```
+
+## Relationship between room and board and tuition
+
+**Note:** Many 2 year institutions do not have room and board fees, so the following looks primarily at 4 year schools.
+
+When we look at the relationship between room and board and in-state tuition, we see it very clearly depends on whether the institution is private or public. Private institutions have a strong linear relationship between the two costs: the more the room and board, the more in-state tuition. However, for public institutions, there is less of a positive correlation. In New York, for instance, there is not much of a relationship at all. The in-state tuition of a public New York university does not vary much at all, but the room and board fees vary considerably, from $10,000-18,000.
+
+```{r fig.height=5}
+tuition_cost_top %>% 
+  filter(!is.na(room_and_board) & !is.na(in_state_tuition), degree_length == "4 Year") %>% 
+  ggplot(aes(x = room_and_board, y = in_state_tuition, color = type)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_x_continuous(labels = dollar_format()) +
+  scale_y_continuous(labels = dollar_format()) +
+  facet_wrap(~ state) +
+  theme(legend.position = "bottom", panel.grid.minor.y = element_blank(), panel.grid.minor.x = element_blank(), plot.title = element_text(face = "bold"), axis.text = element_text(size = 6)) +
+  labs(
+    title = "Relationship between room and board and in-state tuition\ndepends on institution type",
+    subtitle = "Room and board and in-state tuition by state and tuition type",
+    x = "Room and board",
+    y = "In-state tuition",
+    color = element_blank(),
+    caption = "Each point represents an individual college or university.\n4-year institutions only."
+  )
+```
+
+### Room and board, in-state tuition ratio
+
+We can also see how these two costs differ by institution type when we divide the room and board cost by the in-state tuition. I call this the "room and board to in-state tuition ratio." If the number is 1, it means the room and board and tuition for institution are the same. When it's greater than 1, room and board is more, when it's less than one, in-state tuition is more. 
+
+Below I get the median ratio for each state. Here, we see the that the median ratio for private institutions hovers around 0.3; but for public institutions, it is closer to 1. This seems to say that public institutions charge more for room and board relative to tuition compared to private institutions; public institutions may be recovering some of the loss by charging less tuition by charging more for room and board.
+
+```{r}
+tuition_cost_top %>% 
+  filter(!is.na(room_and_board) & !is.na(in_state_tuition), degree_length == "4 Year") %>% 
+  mutate(cost_ratio = room_and_board / in_state_tuition) %>% 
+  group_by(state, type) %>% 
+  summarize(median_cost_ratio = median(cost_ratio)) %>% 
+  pivot_wider(names_from = "type", values_from = "median_cost_ratio") %>% 
+  kable(caption = "Median room and board to in-state tuition ratio by state", row.names = TRUE, col.names = c("State", "Private", "Public"), digits = 3)
+  
+```
+
+Below we can see that California really charges a lot for room and board relative to tuition; New York as well. This may be due to their economies being typically higher than the rest of the country.
+
+```{r}
+tuition_cost_top %>% 
+  filter(!is.na(room_and_board) & !is.na(in_state_tuition), degree_length == "4 Year") %>% 
+  mutate(cost_ratio = room_and_board / in_state_tuition) %>% 
+  ggplot(aes(x = type, y = cost_ratio, color = type)) +
+  geom_point(size = 3, alpha = 0.65) +
+  facet_wrap(~ state) +
+  coord_flip() +
+  scale_y_continuous(breaks = seq(0, 3, by = 0.5)) +
+  theme(panel.spacing.x = unit(2, "lines"), legend.position = "none", panel.grid.minor.y = element_blank(), panel.grid.minor.x = element_blank(), plot.title = element_text(face = "bold")) +
+  labs(
+    title = "Room and board costs more for public institutions relative to tuition",
+    subtitle = "Room and board to in-state tuition ratio by state",
+    x = element_blank(),
+    y = "Room and board to in-state tuition ratio",
+    color = element_blank(),
+    caption = "Each point represents an individual college or university.\n4-year institutions only."
+  )
+```
+
+## Salary potential
+
+When turning to the salary potential data, states have, at most, 25 records. This makes it a little difficult to join it to the tuition cost data. Below, for consistency, I just manually choose the six states I have been working with. These states all have 25 schools listed.
+
+```{r}
+salary_potential_top <- salary_potential %>% 
+  filter(state_name %in% c("California", "Illinois", "New-York", "Ohio", "Pennsylvania", "Texas")) %>% # why is New York being spelled "New-York"?
+  mutate(make_world_better_percent = make_world_better_percent / 100,
+         stem_percent = stem_percent / 100,
+         mid_early_difference = mid_career_pay - early_career_pay, # want these to be actual percentages/proportions
+         state_name = if_else(state_name == "New-York", "New York", state_name),  # changing New-York here.
+         name = str_remove(name, "-Main Campus"),  # changing New-York here.
+         name = str_replace(name, "University of California-", "University of California: "),
+         name = str_replace(name, "University-", "University: "),
+         name = str_replace(name, "The University of Texas", "University of Texas")) # changing lots of university names here so they join
+
+salary_potential_top %>% 
+  group_by(state_name) %>% 
+  summarize(n = n(),
+            median_early_career_pay = dollar(median(early_career_pay), accuracy = 1),
+            median_mid_career_pay = dollar(median(mid_career_pay), accuracy = 1),
+            median_mid_early_difference = dollar(median(mid_early_difference), accuracy = 1),
+            median_world_better = percent(median(make_world_better_percent, na.rm = TRUE), accuracy = 1),
+            median_stem_percent = percent(median(stem_percent), accuracy = 1)) %>% 
+  kable(row.names = TRUE, col.names = c("State", "Total colleges and universities", "Median early-career", "Median mid-career", "Median difference", "Median % make the world better", "Median % STEM"))
+```
+
+It appears in California and New York that the difference between expected early- and mid-career pay is higher; but overall, this estimate varies from $40,000 to $55,000. We also see that only around half of alumni across these states say they believe they are making the world a better place.
+
+### How much of a bump do schools have between early- and mid-career pay?
+
+Let's look at the difference in early- and mid-career pay a little further. Below we see each university's early- to mid-career bump in pay. Not too much stands out, except we do see slightly steeper lines in California and New York.
+
+```{r fig.height=5}
+salary_potential_top %>% 
+  pivot_longer(cols = c("early_career_pay", "mid_career_pay", "make_world_better_percent", "stem_percent", "mid_early_difference"),
+               names_to = "metric",
+               values_to = "value") %>% 
+  filter(metric %in% c("early_career_pay", "mid_career_pay")) %>% 
+  mutate(metric = str_to_sentence(str_replace_all(metric, "_", " "))) %>% 
+  ggplot(aes(x = metric, y = value, group = name, color = state_name)) +
+  geom_point() +
+  geom_line() +
+  facet_wrap(~ state_name) +
+  scale_color_viridis_d() +
+  scale_y_continuous(labels = dollar_format()) +
+  theme(panel.spacing.x = unit(2, "lines"), legend.position = "none", panel.grid.minor.y = element_blank(), axis.text = element_text(size = 6), plot.title = element_text(face = "bold")) +
+  labs(
+    title = "Colleges and universities on same career pay trajectories",
+    subtitle = "Difference between early- and mid-career pay by state",
+    x = element_blank(),
+    y = element_blank(),
+    color = element_blank(),
+    caption = "Each line represents an individual college or university."
+  )
+```
+
+
+### Is there a relationship between STEM and mid-career pay?
+
+We also see a slight positive relationship between the % of the student body who are STEM majors and their mid-career pay. This may indicate that STEM gives students higher earning potential, although their are clear outliers.
+
+```{r fig.width=4}
+salary_potential_top %>% 
+  ggplot(aes(x = stem_percent, y = mid_career_pay)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_x_continuous(limits = c(0, 1), labels = percent_format(accuracy = 1)) +
+  scale_y_continuous(limits = c(0, 200000), labels = dollar_format()) +
+  theme(panel.spacing.x = unit(2, "lines"), legend.position = "none", panel.grid.minor.y = element_blank(), plot.title = element_text(face = "bold")) +
+  labs(
+    title = "There is a slight positve correlation between\nSTEM and pay",
+    subtitle = "% of the student body who are STEM majors\nvs. mid-career pay",
+    x = element_blank(),
+    y = element_blank(),
+    color = element_blank(),
+    caption = "Each point represents an individual college or university."
+  )
+```
+
+### Is there a relationship between making the world a better place and mid-career pay?
+
+This is not the case for the % of alumni who say they are making the world a better place. Below we see little to no positve linear relationship.
+
+```{r fig.width=4}
+salary_potential_top %>% 
+  ggplot(aes(x = make_world_better_percent, y = mid_career_pay)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_x_continuous(limits = c(0, 1), labels = percent_format(accuracy = 1)) +
+  scale_y_continuous(limits = c(0, 200000), labels = dollar_format()) +
+  theme(panel.spacing.x = unit(2, "lines"), legend.position = "none", panel.grid.minor.y = element_blank(), plot.title = element_text(face = "bold")) +
+  labs(
+    title = "There is no relationship between making\nthe world a better place and pay",
+    subtitle = "% of alumni who say they are making the world a better place\nvs. mid-career pay",
+    x = element_blank(),
+    y = element_blank(),
+    color = element_blank(),
+    caption = "Each point represents an individual college or university."
+  )
+```
+
+
+## Combining datasets
+
+Lastly, I wanted to combine both datasets to see what we can learn about the relationship between tuition and salary. Although many of the 150 records from the salary potential data joined correctly, there were 30 colleges and universities that did not match. Thus, the analysis below is for only 120 schools from the six states I looked at. 
+
+It's also important to note that all the schools that joined were *4 year institutions and mostly private*. This is most likely the case because the salary potential data was only the top ranked schools in each state.
+
+```{r eval=FALSE}
+salary_potential_top %>% 
+  left_join(tuition_cost_top, by = "name") %>% 
+  filter(is.na(state)) # here I needed to "guess and check" with my join. A very common move: make a left join and see which one's didn't join with is.na()
+```
+
+
+```{r}
+salary_tuition <- salary_potential_top %>% 
+  inner_join(tuition_cost_top, by = "name") # lost 30 records.
+```
+
+### Making the world a better place
+
+We saw above that roughly half of students across these states believe they are making the world a better place. Does this differ by public or private institution? Below we see that public institutions tend to rate this question higher, and that New York public institutions stand out for positively rating their impact on the world.
+
+```{r}
+salary_tuition %>% 
+  filter(!is.na(make_world_better_percent)) %>% 
+  group_by(state, type) %>% 
+  summarize(median_make_world = median(make_world_better_percent),
+            n = n()) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = type, y = median_make_world, fill = state)) +
+  geom_col() +
+  facet_wrap(~ state) +
+  scale_fill_viridis_d() +
+  scale_y_continuous(limits = c(0, 1), labels = percent_format(accuracy = 1)) +
+  theme(panel.spacing.x = unit(2, "lines"), legend.position = "none", panel.grid.major.x = element_blank(), panel.grid.minor.y = element_blank(), plot.title = element_text(face = "bold")) +
+  labs(
+    title = "New York public institutions believe they are improving the world",
+    subtitle = "% of student body who believe they're making the world better (median) by state and type",
+    x = element_blank(),
+    y = element_blank()
+  )
+  
+```
+
+### Does in-state tuition predict mid-career pay?
+
+Lastly, I wanted to see if going to a private institution (and thus paying more) leads to higher career pay. Below we see that we don't see a very strong relationship between tuition and pay. It's important to note that there may be some selection bias: the salary potential data is only for the top ranked schools across the country, so we may be seeing that at this top tier, it doesn't make much difference if the school you attend is private or public.
+
+There is a slightly positive relationship but it isn't very strong.
+
+```{r}
+salary_tuition %>% 
+  ggplot(aes(x = in_state_tuition, y = mid_career_pay, color = type)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_x_continuous(labels = dollar_format()) +
+  scale_y_continuous(limits = c(0, 200000), labels = dollar_format()) +
+  facet_wrap(~ type, scales = "free_x") +
+  theme(panel.spacing.x = unit(2, "lines"), legend.position = "none", panel.grid.major.x = element_blank(), panel.grid.minor.y = element_blank(), plot.title = element_text(face = "bold")) +
+  labs(
+    title = "There is not a strong relationship between tuititon and pay",
+    subtitle = "Mid-career pay vs. In-state tuition by institution type",
+    x = "In-state tuition",
+    y = "Mid-career pay"
+  )
+```
+
+## Conclusion
+
+In conclusion, there are a number of takeaways worth highlighting:
+
+* We saw just how much more expensive private institutions are than private, and how 2 year public institutions are considerably cheaper than 4 year public.
+* We also saw an interesting relationship between room and board and tuition for private and public institutions; public institutions charge relatively more for their room and board fees than private universities, although overall private schools are much more expensive. There's also less of a positive relationship between room and board and tuition for public institutions: for most states, room and board varied widely for schools of the same tuition cost. This was in general not true for private schools.
+* When we turned to the salary potential data, we saw that on average the difference between early- and mid-career pay was around $50,000. We also saw that only around a half of alumni at these universities believed they are making the world a better place.
+* We saw a slight positive correlation between % of the student who are STEM majors and mid-career pay; we did not see any relationship between % who believe they are making the world a better place and pay.
+* When we combined datasets we saw that public institutions tended to believe they were making the world better at higher rates than private institutions.
+* Lastly, we saw that for these highly ranked schools, there was not a strong correlation between tuition and mid-career pay, and that attending a private institution did not appear to advantages students  in terms of earning potential.
+
+
