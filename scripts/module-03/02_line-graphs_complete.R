@@ -21,7 +21,7 @@ ggplot(office_ratings, aes(x = episode, y = imdb_rating)) +
 # That doesn't look right! Why are there those vertical lines?
 
 # 3) PUT season WITHIN the as.factor() function FOR color (LIKE THE LAST EXERCISE WITH HISTOGRAMS)
-ggplot(office_ratings, aes(x = episode, y = imdb_rating, color = as_factor(season))) +
+ggplot(office_ratings, aes(x = episode, y = imdb_rating, color = as.factor(season))) +
   geom_line()
 
 # That's looking better; but it's still pretty ugly. Let's use our new ggplot function facet_wrap instead of color.

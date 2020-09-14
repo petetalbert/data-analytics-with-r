@@ -7,6 +7,7 @@ output: word_document
 
 ```{r, your turn instructions, include=FALSE}
 # Let's practice knitr options! -----------------------------------
+# Note: no need for a "complete" file; just give these different knitr options a shot.
 # 1) IN THE FIRST R SETUP CHUNK BELOW, CHANGE echo TO TRUE, AND RE-KNIT. HOW IS THE OUTPUT DIFFERENT?
 # 2) CHANGE echo BACK TO FALSE; NOW CHANGE BOTH warning AND message TO TRUE, AND RE-KNIT. HOW IS THE OUTPUT DIFFERENT?
 # 3) CHANGE warning AND message BACK TO FALSE; IN THE SECOND CHUNK WHERE WE IMPORT THE DATA, INSIDE THE CURLY BRACES TYPE eval = FALSE, AND RE-KNIT. 

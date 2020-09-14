@@ -41,7 +41,7 @@ We'll talk about the `distinct()` function in module 6, but for now, a way to ge
 
 ```{r}
 tuition_cost %>% 
-  inner_join(___, by = "___")
+  inner_join(diversity_school_total, by = "state")
 
 ```
 

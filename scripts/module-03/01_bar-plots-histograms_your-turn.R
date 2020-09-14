@@ -47,5 +47,5 @@ ggplot(office_ratings, aes(x = ___)) +
 # 3) LASTLY, TAKE YOUR PLOT WITH THE BINWIDTH SET TO 0.25, AND PUT season WITHIN the as_factor() function FOR fill.
 # (We will talk much more about the fill option and the new data type, factors.)
 # What is this plot showing us? Do you see any trend or pattern?
-ggplot(office_ratings, aes(x = ___, fill = as_factor(___))) +
+ggplot(office_ratings, aes(x = ___, fill = as.factor(___))) +
   geom____(___ = ___)

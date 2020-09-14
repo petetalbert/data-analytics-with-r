@@ -34,6 +34,6 @@ office_ratings %>%
 office_ratings %>% 
   group_by(___) %>% 
   summarize(avg_imdb_rating = mean(___)) %>% 
-  mutate(season = as_factor(___)) %>% 
+  mutate(season = as.factor(___)) %>% 
   ggplot(aes(x = season, y = avg_imdb_rating)) +
   geom____()

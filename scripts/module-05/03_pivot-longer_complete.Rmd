@@ -49,8 +49,27 @@ The median out-of-state tuition is around $7,400 more than the median in-state t
 # 3)
 
 ```{r}
+# this will filter out all rows that have NA costs.
 tuition_cost_long %>% 
   filter(!is.na(cost)) %>% 
   group_by(cost_type) %>% 
   summarize(median_cost = median(cost))
+
+# this will do the same thing in this instance (by using the na.rm optional argument in median()). But be aware this may be a better option than filter(!is.na(column_name))
+# because if we were summarizing different columns, we would filter out rows we may want for different summaries.
+tuition_cost_long %>% 
+  group_by(cost_type) %>% 
+  summarize(median_cost = median(cost, na.rm = TRUE))
+
+# Here's an example where this would return different results:
+# A) This removes ALL schools that have NA room_and_board; this changes the in_state_tuition.
+tuition_cost %>% 
+  filter(!is.na(room_and_board)) %>% 
+  summarize(median_room_and_board = median(room_and_board),
+            median_in_state_tuition = median(in_state_tuition))
+
+# B) This still computes in_state_tuition from all schools.
+tuition_cost %>% 
+  summarize(median_room_and_board = median(room_and_board, na.rm = TRUE),
+            median_in_state_tuition = median(in_state_tuition))
 ```
