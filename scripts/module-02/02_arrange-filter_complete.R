@@ -37,11 +37,20 @@ arrange(office_ratings, desc(total_votes), desc(imdb_rating))
 ### <         less than
 ### <=        less than or equal to
 ### ==        equals
+### !=        does not equal
 
 # We can also string together different logical operators with AND and OR statements.
 #   Operator  Meaning
 ### &         and
 ### |         or
+
+# If we need to make lots of OR statements, it's easiest to use the %in% operator followed by a c() with the different values we want
+# For example, filter(office_ratings, epsiode %in% c(24, 27, 30))
+
+# Lastly, we don't have any NA values in the office_ratings dataset but if we did we could filter them by doing the following:
+#   Operator  Meaning
+### is.na()   missing values
+### !is.na()  non-missing values
 
 # 5) FILTER office_ratings WHERE imdb_rating IS GREATER THAN 8.5.
 filter(office_ratings, imdb_rating > 8.5)
@@ -49,4 +58,7 @@ filter(office_ratings, imdb_rating > 8.5)
 # 6) FILTER office_ratings WHERE imdb_rating IS GREATER THAN 8.5 AND total_votes IS GREATER THAN OR EQUAL TO 3500.
 # we can supply more than one criterion!
 filter(office_ratings, imdb_rating > 8.5 & total_votes > 3500)
+
+# 7) FILTER office_ratings WHERE season IS 1, 2, 4, or, 9. HINT, IN THIS INSTANCE, IT'S EASIEST TO USER %in%.
+filter(office_ratings, season %in% c(1, 2, 3, 9))
 

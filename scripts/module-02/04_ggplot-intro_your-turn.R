@@ -36,13 +36,13 @@ ggplot(office_ratings, aes(x = season)) +
 # install.packages("scales")
 library(scales)
 
-ggplot(data = office_ratings_summary, mapping = aes(x = as.character(season), y = avg_total_votes)) + 
+ggplot(data = office_ratings_summary, mapping = aes(x = as.factor(season), y = avg_imdb_rating)) + 
   geom_col(fill = "slategray") +
   scale_y_continuous(labels = comma_format(accuracy = 1)) +
   theme_minimal() +
   labs(
-    title = "The Office received less total IMDB votes on average\nas the show went along",
-    subtitle = "Average total votes per season of The Office",
+    title = "The Office received on average, lower IMDB\nratings on average after season 5",
+    subtitle = "Average IMDB rating per season of The Office",
     x = "Season",
     y = "Avg total votes"
   ) +

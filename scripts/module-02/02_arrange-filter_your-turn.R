@@ -44,10 +44,21 @@ arrange(office_ratings, ___)
 ### &         and
 ### |         or
 
+# If we need to make lots of OR statements, it's easiest to use the %in% operator followed by a c() with the different values we want
+# For example, filter(office_ratings, season %in% c(1, 4, 9))
+
+# Lastly, we don't have any NA values in the office_ratings dataset but if we did we could filter them by doing the following:
+#   Operator  Meaning
+### is.na()   missing values
+### !is.na()  non-missing values
+
 # 5) FILTER office_ratings WHERE imdb_rating IS GREATER THAN 8.5.
 filter(office_ratings, ___)
 
 # 6) FILTER office_ratings WHERE imdb_rating IS GREATER THAN 8.5 AND total_votes IS GREATER THAN OR EQUAL TO 3500.
 # we can supply more than one criterion!
 filter(office_ratings, ___ & ___)
+
+# 7) FILTER office_ratings WHERE season IS 1, 2, 4, or, 9. HINT, IN THIS INSTANCE, IT'S EASIEST TO USER %in%.
+filter(office_ratings, ___)
 
